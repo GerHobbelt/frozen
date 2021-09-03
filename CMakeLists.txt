@@ -34,7 +34,7 @@ CMAKE_DEPENDENT_OPTION(frozen.tests
 
 CMAKE_DEPENDENT_OPTION(frozen.benchmark
   "Build the frozen benchmark"
-  OFF "NOT subproject" OFF)
+  ON "NOT subproject" ON)
 
 CMAKE_DEPENDENT_OPTION(frozen.coverage
   "Enable test coverage collection of frozen tests"

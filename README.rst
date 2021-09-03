@@ -43,6 +43,14 @@ Just copy the ``include/frozen`` directory somewhere and points to it using the 
 Installation via CMake populates configuration files into the ``/usr/local/share``
 directory which can be consumed by CMake's ``find_package`` instrinsic function.
 
+To integrate with `VCPKG`_ :
+
+.. code:: sh
+
+    > vcpkg install frozen
+
+.. _VCPKG: https://github.com/microsoft/vcpkg
+
 Requirements
 ------------
 
