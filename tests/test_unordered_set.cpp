@@ -1,7 +1,9 @@
 #include <frozen/string.h>
 #include <frozen/unordered_set.h>
+#include <frozen/bits/elsa_std.h>
 #include <iostream>
 #include <unordered_set>
+#include <string>
 
 #include "bench.hpp"
 #include "catch.hpp"
@@ -135,17 +137,18 @@ TEST_CASE("frozen::unordered_set with enum keys", "[unordered_set]") {
 }
 
 TEST_CASE("frozen::unordered_set <> frozen::make_unordered_set", "[unordered_set]") {
-  constexpr frozen::unordered_set<int, 129> frozen_set = { INIT_SEQ };
-  constexpr auto frozen_set2 = frozen::make_unordered_set<int>({INIT_SEQ});
-  constexpr auto frozen_set3 = frozen::make_unordered_set(std::array<int, 129>{{INIT_SEQ}});
-  REQUIRE(std::equal(frozen_set2.begin(), frozen_set2.end(), frozen_set3.begin()));
+  constexpr frozen::unordered_set<int, 129> from_ctor = { INIT_SEQ };
+  constexpr int init_array[]{INIT_SEQ};
+  constexpr auto from_c_array = frozen::make_unordered_set(init_array);
+  constexpr auto from_std_array = frozen::make_unordered_set(std::array<int, 129>{{INIT_SEQ}});
+  REQUIRE(std::equal(from_c_array.begin(), from_c_array.end(), from_std_array.begin()));
 
   SECTION("checking size and content") {
-    REQUIRE(frozen_set.size() == frozen_set2.size());
-    for (auto v : frozen_set2)
-      REQUIRE(frozen_set.count(v));
-    for (auto v : frozen_set)
-      REQUIRE(frozen_set2.count(v));
+    REQUIRE(from_ctor.size() == from_c_array.size());
+    for (auto v : from_c_array)
+      REQUIRE(from_ctor.count(v));
+    for (auto v : from_ctor)
+      REQUIRE(from_c_array.count(v));
   }
 }
 TEST_CASE("frozen::unordered_set constexpr", "[unordered_set]") {
@@ -167,3 +170,30 @@ TEST_CASE("frozen::unordered_set deduction guide", "[unordered_set]") {
 }
 
 #endif // FROZEN_LETITGO_HAS_DEDUCTION_GUIDES
+
+TEST_CASE("frozen::unordered_set heterogeneous lookup", "[unordered_set]") {
+  using namespace frozen::string_literals;
+
+  constexpr frozen::unordered_set<frozen::string, 3> set{"one"_s, "two"_s, "three"_s};
+
+  const auto eq = [](const frozen::string& frozen, const std::string& std) {
+    return frozen == frozen::string{std.data(), std.size()};
+  };
+
+  REQUIRE(set.find(std::string{"two"}, frozen::elsa<std::string>{}, eq) != set.end());
+}
+
+TEST_CASE("frozen::unordered_set heterogeneous container", "[unordered_set]") {
+  using namespace frozen::string_literals;
+
+  const auto eq = [](const frozen::string& frozen, const auto& str) {
+    return frozen == frozen::string{str.data(), str.size()};
+  };
+
+  constexpr auto set = frozen::make_unordered_set<frozen::string>(
+          {"one"_s, "two"_s, "three"_s},
+          frozen::elsa<>{}, eq);
+
+  REQUIRE(set.find(std::string{"two"}) != set.end());
+  REQUIRE(set.find(frozen::string{"two"}) != set.end());
+}
