@@ -28,6 +28,7 @@
 #include "frozen/bits/basic_types.h"
 
 #include <array>
+#include <cstdint>
 #include <limits>
 
 namespace frozen {
@@ -56,7 +57,7 @@ struct pmh_buckets {
 
   using bucket_t = cvector<std::size_t, bucket_max>;
   carray<bucket_t, M> buckets;
-  uint64_t seed;
+  std::uint64_t seed;
 
   // Represents a reference to a bucket. This is used because the buckets
   // have to be sorted, but buckets are big, making it slower than sorting refs
@@ -104,7 +105,7 @@ pmh_buckets<M> constexpr make_pmh_buckets(const carray<Item, N> & items,
     result.seed = prg();
     rejected = false;
     for (std::size_t i = 0; i < N; ++i) {
-      auto & bucket = result.buckets[hash(key(items[i]), static_cast<size_t>(result.seed)) % M];
+      auto & bucket = result.buckets[hash(key(items[i]), static_cast<std::size_t>(result.seed)) % M];
       if (bucket.size() >= result_t::bucket_max) {
         rejected = true;
         break;
@@ -128,7 +129,7 @@ constexpr bool all_different_from(cvector<T, N> & data, T & a) {
 // Represents either an index to a data item array, or a seed to be used with
 // a hasher. Seed must have high bit of 1, value has high bit of zero.
 struct seed_or_index {
-  using value_type = uint64_t;
+  using value_type = std::uint64_t;
 
 private:
   static constexpr value_type MINUS_ONE = std::numeric_limits<value_type>::max();
@@ -151,7 +152,7 @@ public:
 // Represents the perfect hash function created by pmh algorithm
 template <std::size_t M, class Hasher>
 struct pmh_tables {
-  uint64_t first_seed_;
+  std::uint64_t first_seed_;
   carray<seed_or_index, M> first_table_;
   carray<std::size_t, M> second_table_;
   Hasher hash_;
@@ -165,7 +166,7 @@ struct pmh_tables {
   // Always returns a valid index, must use KeyEqual test after to confirm.
   template <typename KeyType, typename HasherType>
   constexpr std::size_t lookup(const KeyType & key, const HasherType& hasher) const {
-    auto const d = first_table_[hasher(key, static_cast<size_t>(first_seed_)) % M];
+    auto const d = first_table_[hasher(key, static_cast<std::size_t>(first_seed_)) % M];
     if (!d.is_seed()) { return static_cast<std::size_t>(d.value()); } // this is narrowing uint64 -> size_t but should be fine
     else { return second_table_[hasher(key, static_cast<std::size_t>(d.value())) % M]; }
   }
@@ -199,7 +200,7 @@ pmh_tables<M, Hash> constexpr make_pmh_tables(const carray<Item, N> &
     if (bsize == 1) {
       // Store index to the (single) item in G
       // assert(bucket.hash == hash(key(items[bucket[0]]), step_one.seed) % M);
-      G[bucket.hash] = {false, static_cast<uint64_t>(bucket[0])};
+      G[bucket.hash] = {false, static_cast<std::uint64_t>(bucket[0])};
     } else if (bsize > 1) {
 
       // Repeatedly try different H of d until we find a hash function
@@ -208,7 +209,7 @@ pmh_tables<M, Hash> constexpr make_pmh_tables(const carray<Item, N> &
       cvector<std::size_t, decltype(step_one)::bucket_max> bucket_slots;
 
       while (bucket_slots.size() < bsize) {
-        auto slot = hash(key(items[bucket[bucket_slots.size()]]), static_cast<size_t>(d.value())) % M;
+        auto slot = hash(key(items[bucket[bucket_slots.size()]]), static_cast<std::size_t>(d.value())) % M;
 
         if (H[slot] != UNUSED || !all_different_from(bucket_slots, slot)) {
           bucket_slots.clear();
