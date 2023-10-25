@@ -67,7 +67,7 @@ public:
   using reference = const_reference;
   using const_pointer = typename container_type::const_pointer;
   using pointer = const_pointer;
-  using const_iterator = const_pointer;
+  using const_iterator = typename container_type::const_iterator;
   using iterator = const_iterator;
 
 public:
@@ -93,8 +93,8 @@ public:
   /* iterators */
   constexpr const_iterator begin() const { return keys_.begin(); }
   constexpr const_iterator end() const { return keys_.end(); }
-  constexpr const_iterator cbegin() const { return keys_.cbegin(); }
-  constexpr const_iterator cend() const { return keys_.cend(); }
+  constexpr const_iterator cbegin() const { return keys_.begin(); }
+  constexpr const_iterator cend() const { return keys_.end(); }
 
   /* capacity */
   constexpr bool empty() const { return !N; }
