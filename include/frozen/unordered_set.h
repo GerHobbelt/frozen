@@ -105,7 +105,7 @@ public:
   /* lookup */
   template <class KeyType, class Hasher, class Equal>
   constexpr std::size_t count(KeyType const &key, Hasher const &hash, Equal const &equal) const {
-    auto const k = lookup(key, hash);
+    auto const & k = lookup(key, hash);
     return equal(k, key);
   }
   template <class KeyType>
@@ -124,6 +124,11 @@ public:
   template <class KeyType>
   constexpr const_iterator find(KeyType const &key) const {
     return find(key, hash_function(), key_eq());
+  }
+  
+  template <class KeyType>
+  constexpr bool contains(KeyType const &key) const {
+    return this->find(key) != keys_.end();
   }
 
   template <class KeyType, class Hasher, class Equal>

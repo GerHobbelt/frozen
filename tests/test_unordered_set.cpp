@@ -65,7 +65,7 @@ TEST_CASE("tripleton str frozen unordered set", "[unordered set]") {
   constexpr auto max_size = ze_set.max_size();
   REQUIRE(max_size == 3);
 
-  constexpr auto nocount = ze_set.count(4);
+  const auto nocount = ze_set.count(4);
   REQUIRE(nocount == 0);
 
   constexpr auto count = ze_set.count(1);
@@ -158,6 +158,8 @@ TEST_CASE("frozen::unordered_set constexpr", "[unordered_set]") {
   static_assert(ce.count(3), "");
   static_assert(!ce.count(0), "");
   static_assert(ce.find(0) == ce.end(), "");
+  static_assert(ce.contains(3), "");
+  static_assert(!ce.contains(0), "");
 }
 
 #ifdef FROZEN_LETITGO_HAS_DEDUCTION_GUIDES
