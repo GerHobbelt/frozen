@@ -96,16 +96,12 @@ pmh_buckets<M> constexpr make_pmh_buckets(const carray<Item, N> & items,
                                 Key const & key,
                                 PRG & prg) {
   using result_t = pmh_buckets<M>;
-  result_t result{};
-  bool rejected = false;
   // Continue until all items are placed without exceeding bucket_max
   while (1) {
-    for (auto & b : result.buckets) {
-      b.clear();
-    }
+    result_t result{};
     result.seed = prg();
-    rejected = false;
-    for (std::size_t i = 0; i < N; ++i) {
+    bool rejected = false;
+    for (std::size_t i = 0; i < items.size(); ++i) {
       auto & bucket = result.buckets[hash(key(items[i]), static_cast<std::size_t>(result.seed)) % M];
       if (bucket.size() >= result_t::bucket_max) {
         rejected = true;
@@ -152,15 +148,29 @@ public:
 
 // Represents the perfect hash function created by pmh algorithm
 template <std::size_t M, class Hasher>
-struct pmh_tables {
+struct pmh_tables : private Hasher {
   std::uint64_t first_seed_;
   carray<seed_or_index, M> first_table_;
   carray<std::size_t, M> second_table_;
-  Hasher hash_;
+
+  constexpr pmh_tables(
+      std::uint64_t first_seed,
+      carray<seed_or_index, M> first_table,
+      carray<std::size_t, M> second_table,
+      Hasher hash) noexcept
+    : Hasher(hash)
+    , first_seed_(first_seed)
+    , first_table_(first_table)
+    , second_table_(second_table)
+  {}
+
+  constexpr Hasher const& hash_function() const noexcept {
+    return static_cast<Hasher const&>(*this);
+  }
 
   template <typename KeyType>
   constexpr std::size_t lookup(const KeyType & key) const {
-    return lookup(key, hash_);
+    return lookup(key, hash_function());
   }
 
   // Looks up a given key, to find its expected index in carray<Item, N>
@@ -194,12 +204,10 @@ pmh_tables<M, Hash> constexpr make_pmh_tables(const carray<Item, N> &
   const auto UNUSED = items.size();
 
   // G becomes the first hash table in the resulting pmh function
-  carray<seed_or_index, M> G; // Default constructed to "index 0"
-  G.fill({false, UNUSED});
+  carray<seed_or_index, M> G({false, UNUSED});
 
   // H becomes the second hash table in the resulting pmh function
-  carray<std::size_t, M> H;
-  H.fill(UNUSED);
+  carray<std::size_t, M> H(UNUSED);
 
   // Step 3: Map the items in buckets into hash tables.
   for (const auto & bucket : buckets) {
