@@ -98,7 +98,8 @@ class carray {
       : data_{((void)I, value)...} {}
 
   static constexpr void check_initializer(std::initializer_list<T> init) {
-    constexpr_assert(init.size() >= N, "Cannot initialize a carray with an smaller initializer list");
+    (void)init;
+    constexpr_assert(init.size() == N, "Cannot initialize a carray with an initializer list of different size.");
   }
 
 public:
