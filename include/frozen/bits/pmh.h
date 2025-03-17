@@ -193,6 +193,7 @@ pmh_tables<M, Hash> constexpr make_pmh_tables(const carray<Item, N> &
                                                            PRG prg) {
   // Step 1: Place all of the keys into buckets
   auto step_one = make_pmh_buckets<M>(items, hash, key, prg);
+  (void)equal;
 
 #ifndef NDEBUG
   // Step 1.5: Detect redundant keys.
