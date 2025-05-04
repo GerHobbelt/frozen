@@ -21,7 +21,7 @@ static auto const* volatile Some = &Keywords;
 static void BM_StrInFzSet(benchmark::State& state) {
   for (auto _ : state) {
     for(auto kw : *Some) {
-      volatile bool status = Keywords.count(kw);
+      volatile bool status = (Keywords.count(kw) != 0);
       benchmark::DoNotOptimize(status);
     }
   }
@@ -33,7 +33,7 @@ static const std::set<frozen::string> Keywords_(Keywords.begin(), Keywords.end()
 static void BM_StrInStdSet(benchmark::State& state) {
   for (auto _ : state) {
     for(auto kw : *Some) {
-      volatile bool status = Keywords_.count(kw);
+      volatile bool status = (Keywords_.count(kw) != 0);
       benchmark::DoNotOptimize(status);
     }
   }
@@ -73,7 +73,7 @@ static auto const * volatile SomeStringsPtr = &SomeStrings;
 static void BM_StrNotInFzSet(benchmark::State& state) {
   for (auto _ : state) {
     for(auto kw : *SomeStringsPtr) {
-      volatile bool status = Keywords.count(kw);
+      volatile bool status = (Keywords.count(kw) != 0);
       benchmark::DoNotOptimize(status);
     }
   }
@@ -83,7 +83,7 @@ BENCHMARK(BM_StrNotInFzSet);
 static void BM_StrNotInStdSet(benchmark::State& state) {
   for (auto _ : state) {
     for(auto kw : *SomeStringsPtr) {
-      volatile bool status = Keywords_.count(kw);
+      volatile bool status = (Keywords_.count(kw) != 0);
       benchmark::DoNotOptimize(status);
     }
   }

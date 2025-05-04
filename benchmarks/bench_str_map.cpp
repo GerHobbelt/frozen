@@ -25,7 +25,7 @@ static void BM_StrInFzUnorderedMap(benchmark::State &state)
   {
     for (auto kw : *Some)
     {
-      volatile bool status = Keywords.count(kw.first);
+      volatile bool status = (Keywords.count(kw.first) != 0);
       benchmark::DoNotOptimize(status);
     }
   }
@@ -40,7 +40,7 @@ static void BM_StrInStdUnorderedMap(benchmark::State &state)
   {
     for (auto kw : *Some)
     {
-      volatile bool status = Keywords_.count(kw.first);
+      volatile bool status = (Keywords_.count(kw.first) != 0);
       benchmark::DoNotOptimize(status);
     }
   }
@@ -63,7 +63,7 @@ static void BM_StrNotInFzUnorderedMap(benchmark::State &state)
   {
     for (auto kw : *SomeStringsPtr)
     {
-      volatile bool status = Keywords.count(kw);
+      volatile bool status = (Keywords.count(kw) != 0);
       benchmark::DoNotOptimize(status);
     }
   }
@@ -76,7 +76,7 @@ static void BM_StrNotInStdUnorderedMap(benchmark::State &state)
   {
     for (auto kw : *SomeStringsPtr)
     {
-      volatile bool status = Keywords_.count(kw);
+      volatile bool status = (Keywords_.count(kw) != 0);
       benchmark::DoNotOptimize(status);
     }
   }
