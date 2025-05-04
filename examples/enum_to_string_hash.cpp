@@ -1,5 +1,7 @@
 #include <cstdio> // for std::puts
 
+#include "monolithic_examples.h"
+
 /* ELF Relocations */
 
 #define ELF_RELOC(name, value) name = value,
@@ -65,6 +67,10 @@ namespace frozen {
 #include <unordered_map>
 #endif
 
+namespace {
+
+using namespace std;
+
 #ifdef FROZEN_VERSION
 constexpr
 frozen::unordered_map<RELOC_i386, const char*, 41>
@@ -120,7 +126,14 @@ char const * enum_to_string(RELOC_i386 e) {
   return e2s.at(e);
 }
 
-int main() {
+}  // namespace
+
+#if defined(BUILD_MONOLITHIC)
+#define main                   frozen_enum_to_string_hash_example_main
+#endif
+
+extern "C"
+int main(void) {
   std::puts(enum_to_string(RELOC_i386::R_386_8));
   return 0;
 }

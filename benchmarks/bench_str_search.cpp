@@ -4,6 +4,10 @@
 #include <functional>
 #include <cstring>
 
+#if defined(BUILD_MONOLITHIC)
+#define BENCHMARK_FAMILY_ID    "frozen"
+#endif
+
 static char const Words [] = R"(
 Let it go, let it go
 Can't hold it back anymore

@@ -8,6 +8,10 @@
 #include <string>
 #include <algorithm>
 
+#if defined(BUILD_MONOLITHIC)
+#define BENCHMARK_FAMILY_ID    "frozen"
+#endif
+
 static constexpr frozen::set<frozen::string, 32> Keywords{
     "auto",     "break",  "case",    "char",   "const",    "continue",
     "default",  "do",     "double",  "else",   "enum",     "extern",

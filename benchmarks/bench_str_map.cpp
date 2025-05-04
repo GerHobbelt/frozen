@@ -8,6 +8,10 @@
 #include <string>
 #include <unordered_map>
 
+#if defined(BUILD_MONOLITHIC)
+#define BENCHMARK_FAMILY_ID    "frozen"
+#endif
+
 static constexpr frozen::unordered_map<frozen::string, frozen::string, 32> Keywords{
     {"auto", "keyword"}, {"break", "keyword"}, {"case", "keyword"}, {"char", "keyword"}, {"const", "keyword"}, {"continue", "keyword"},
     {"default", "keyword"}, {"do", "keyword"}, {"double", "keyword"}, {"else", "keyword"}, {"enum", "keyword"}, {"extern", "keyword"},

@@ -6,6 +6,10 @@
 #include <array>
 #include <algorithm>
 
+#if defined(BUILD_MONOLITHIC)
+#define BENCHMARK_FAMILY_ID    "frozen"
+#endif
+
 static constexpr frozen::set<int, 32> Keywords{
   0, 2, 4, 6, 8, 10, 12, 14,
   16, 18, 20, 22, 24, 26, 28, 30,

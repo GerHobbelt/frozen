@@ -3,6 +3,8 @@
 #include <frozen/unordered_map.h>
 #include <frozen/string.h>
 
+#include "monolithic_examples.h"
+
 struct codes_t
 {
 	uint32_t iCodepoint1;
@@ -2140,7 +2142,12 @@ static constexpr std::pair<frozen::string, codes_t> s_Entities[]
 
 static constexpr auto s_NamedEntitiesHTML4 = frozen::make_unordered_map(s_Entities);
 
-int main(int argv, char** argc)
+#if defined(BUILD_MONOLITHIC)
+#define main                   frozen_html_entities_map_example_main
+#endif
+
+extern "C"
+int main(int argv, const char** argc)
 {
 	return (s_NamedEntitiesHTML4.find("real") == s_NamedEntitiesHTML4.end());
 }

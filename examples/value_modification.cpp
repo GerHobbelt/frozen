@@ -3,6 +3,8 @@
 #include <frozen/unordered_map.h>
 #include <iostream>
 
+#include "monolithic_examples.h"
+
 /// MAYBE_CONSTINIT expands to `constinit` if available.
 #if __cpp_constinit
 #define MAYBE_CONSTINIT constinit
@@ -18,7 +20,12 @@ MAYBE_CONSTINIT static frozen::unordered_map<frozen::string, int, 2> fruits = {
     {"n_pears", 0},
 };
 
-int main() {
+#if defined(BUILD_MONOLITHIC)
+#define main                   frozen_value_modification_example_main
+#endif
+
+extern "C"
+int main(void) {
   // Update the values using at()
   fruits.at("n_apples") = 10;
   fruits.at("n_pears") = fruits.at("n_apples") * 2;
@@ -34,4 +41,6 @@ int main() {
   auto range = fruits.equal_range("n_apples");
   range.first->second = 1337;
   std::cout << "n_apples: " << fruits.at("n_apples") << std::endl;
+
+  return 0;
 }

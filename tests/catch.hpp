@@ -13228,7 +13228,7 @@ namespace Catch {
         void useConfigData( ConfigData const& configData );
 
         template<typename CharT>
-        int run(int argc, CharT const * const argv[]) {
+        int run(int argc, CharT const * const * argv) {
             if (m_startupExceptions)
                 return 1;
             int returnCode = applyCommandLine(argc, argv);
@@ -17534,19 +17534,19 @@ namespace Catch {
 
 #if defined(CATCH_CONFIG_WCHAR) && defined(CATCH_PLATFORM_WINDOWS) && defined(_UNICODE) && !defined(DO_NOT_USE_WMAIN)
 // Standard C/C++ Win32 Unicode wmain entry point
-extern "C" int CATCH_INTERNAL_CDECL wmain (int argc, wchar_t * argv[], wchar_t * []) {
+extern "C" int CATCH_INTERNAL_CDECL wmain (int argc, wchar_t * argv[], const wchar_t **) {
 #else
 // Standard C/C++ main entry point
-int CATCH_INTERNAL_CDECL main (int argc, char * argv[]) {
+extern "C" int CATCH_INTERNAL_CDECL main (int argc, const char ** argv) {
 #endif
 
-    return Catch::Session().run( argc, argv );
+	return Catch::Session().run( argc, argv );
 }
 
 #else // __OBJC__
 
 // Objective-C entry point
-int main (int argc, char * const argv[]) {
+extern "C" int main (int argc, const char * const * argv) {
 #if !CATCH_ARC_ENABLED
     NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
 #endif

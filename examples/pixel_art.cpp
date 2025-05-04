@@ -7,6 +7,8 @@ exit
 #include <frozen/map.h>
 #include <fstream>
 
+#include "monolithic_examples.h"
+
 constexpr frozen::map<char, std::array<char, 3>, 5> Tans{
     {'R', {(char)0xFF, (char)0x00, (char)0x00}},
     {'G', {(char)0x00, (char)0xFF, (char)0x00}},
@@ -111,7 +113,12 @@ void make_1up() {
   some.save("1up.ppm");
 }
 
-int main() {
+#if defined(BUILD_MONOLITHIC)
+#define main                   frozen_pixel_art_example_main
+#endif
+
+extern "C"
+int main(void) {
   make_panda();
   make_1up();
   return 0;
