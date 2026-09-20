@@ -1,8 +1,6 @@
-#include <frozen/string.h>
 #include <frozen/set.h>
-#include <iostream>
+#include <frozen/string.h>
 #include <set>
-#include <array>
 
 #include "bench.hpp"
 #include "catch.hpp"

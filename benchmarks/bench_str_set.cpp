@@ -3,10 +3,9 @@
 #include <frozen/set.h>
 #include <frozen/string.h>
 
-#include <set>
-#include <array>
-#include <string>
 #include <algorithm>
+#include <array>
+#include <set>
 
 #if defined(BUILD_MONOLITHIC)
 #define BENCHMARK_FAMILY_ID    "frozen"

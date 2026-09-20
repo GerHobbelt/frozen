@@ -1,6 +1,4 @@
-#include <algorithm>
 #include <frozen/bits/algorithms.h>
-#include <iostream>
 
 #include "bench.hpp"
 #include "catch.hpp"
